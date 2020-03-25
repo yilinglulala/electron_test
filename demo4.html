@@ -1,0 +1,92 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>选择文件对话框</h1>
+    <button id="openBtn">打开文件</button>
+    <img src="" alt="ysx" id='pic' style="width: 50%;">
+    <h1>保存对话框</h1>
+    <button id="saveBtn">保存文件</button>
+    <h1>消息对话框</h1>
+    <button id="messageBtn">弹出对话框</button>
+    <h1>底部通知消息</h1>
+    <button id="notifyBtn">通知消息</button>
+    <div>
+        激活码：<span id="code">jspangcom1234234242</span> <button id="btn">复制激活码</button>
+    </div>
+</body>
+
+<script>
+    //* 选择文件对话框
+    const fs = require('fs')
+    const { dialog } = require('electron').remote
+    var openBtn = document.getElementById('openBtn');
+    openBtn.onclick = function () {
+        dialog.showOpenDialog({
+            title: '请选择你喜欢的小姐姐照片',
+            defaultPath: 'ysx.png',//默认选择文件
+            buttonLabel: '打开文件',//按钮文字
+            filters: [//文件过滤
+                { name: 'pic', extensions: ['png','jpg'] }
+            ]
+        }).then(res=>{
+            let img = document.querySelector('#pic')
+            img.setAttribute('src',res.filePaths[0])
+        })
+    }
+    //* 保存对话框
+    var saveBtn = document.getElementById('saveBtn');
+    saveBtn.onclick = function () {
+        dialog.showSaveDialog({
+            title: '保存',
+        }).then(res => {
+            fs.writeFileSync(res.filePath, '一个做作的小姐姐')
+        })
+    }
+    //* 消息对话框
+    var messageBtn = document.getElementById('messageBtn');
+    messageBtn.onclick = function () {
+        dialog.showMessageBox({
+            type: 'warning',//none、info、error、question和warning
+            title: '青春有你',
+            message: '喜欢虞书欣吗?',
+            buttons: ['喜欢', '很喜欢','超级喜欢']
+        }).then(res => {
+            // alert(JSON.stringify(res))
+        })
+    }
+
+    // 断线在线监测
+    window.addEventListener('online', function () {
+        alert('我在线')
+    })
+    window.addEventListener('offline', function () {
+        alert('我掉线了')
+    })
+    // 通知消息
+    var notifyBtn = document.getElementById('notifyBtn');
+    var option = {
+        title: '这是一个标题',
+        body: '这是一条通知消息',
+
+    }
+    notifyBtn.onclick = function () {
+        new window.Notification(option.title, option)
+    }
+    // 粘贴板事件
+    const { clipboard } = require('electron')
+    const code = document.getElementById('code')
+    const btn = document.getElementById('btn')
+    btn.onclick = function () {
+        clipboard.writeText(code.innerHTML)
+        alert('复制成功')
+    }
+
+</script>
+
+</html>
